@@ -16,12 +16,13 @@ import java.time.LocalDateTime;
 public class Curso {
     public Curso() {}
 
-    public Curso(Long id, String nombre, LocalDate inicio, LocalDate finalizacion, Double notaMinima) {
+    public Curso(Long id, String nombre, LocalDate inicio, LocalDate finalizacion, Double notaMinima, boolean state) {
         this.id = id;
         this.nombre = nombre;
         this.inicio = inicio;
         this.finalizacion = finalizacion;
         this.notaMinima = notaMinima;
+        this.state = state;
     }
 
     public Curso(CursoDTO cursoDTO) {
@@ -29,6 +30,7 @@ public class Curso {
         this.inicio = cursoDTO.inicio();
         this.finalizacion = cursoDTO.finalizacion();
         this.notaMinima = cursoDTO.notaMinima();
+        this.state = true;
     }
 
     @Id
@@ -48,6 +50,8 @@ public class Curso {
     @NotNull(message = "La nota mínima del curso no puede ser nula")
     private Double notaMinima = 8.0;
 
+    @NotNull()
+    private boolean state;
     @AssertTrue(message = "La fecha de inicio debe ser antes de la finalización")
     public boolean isHorarioValido() {
         if (inicio == null || finalizacion == null) {
@@ -97,4 +101,11 @@ public class Curso {
         this.notaMinima = notaMinima;
     }
 
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
+    }
 }
