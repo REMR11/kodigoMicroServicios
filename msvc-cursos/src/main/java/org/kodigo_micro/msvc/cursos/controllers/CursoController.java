@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.kodigo_micro.msvc.cursos.exceptions.CursoNotFoundException;
 import org.kodigo_micro.msvc.cursos.exceptions.FechaInvalidaException;
 import org.kodigo_micro.msvc.cursos.models.dtos.CursoDTO;
+import org.kodigo_micro.msvc.cursos.models.dtos.CursoFechaDTO;
+import org.kodigo_micro.msvc.cursos.models.dtos.CursoUpdateDTO;
 import org.kodigo_micro.msvc.cursos.models.entity.Curso;
 import org.kodigo_micro.msvc.cursos.services.CursoService;
 import org.springframework.http.HttpStatus;
@@ -41,12 +43,12 @@ public class CursoController {
     @Operation(summary = "Obtener curso por ID", description = "Obtiene un curso específico por su ID")
     @ApiResponse(responseCode = "200", description = "Curso encontrado")
     @ApiResponse(responseCode = "404", description = "Curso no encontrado")
-    public ResponseEntity<Curso> detalle(
+    public ResponseEntity<?> detalle(
             @Parameter(description = "ID del curso", required = true)
             @PathVariable Long id) {
         return service.porId(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new CursoNotFoundException("Curso no encontrado con ID: " + id));
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -54,10 +56,7 @@ public class CursoController {
     @ApiResponse(responseCode = "201", description = "Curso creado exitosamente")
     @ApiResponse(responseCode = "400", description = "Datos del curso inválidos")
     public ResponseEntity<?> crear(@Valid @RequestBody CursoDTO cursoDTO, BindingResult result) throws FechaInvalidaException {
-        if (result.hasErrors()) {
-            return validar(result);
-        }
-
+        if (result.hasErrors()) { return validar(result); }
         validarFechas(cursoDTO);
         Curso cursoDb = new Curso(cursoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(cursoDb));
@@ -68,7 +67,7 @@ public class CursoController {
     @ApiResponse(responseCode = "200", description = "Curso actualizado exitosamente")
     @ApiResponse(responseCode = "404", description = "Curso no encontrado")
     public ResponseEntity<?> editar(
-            @Valid @RequestBody CursoDTO cursoDTO,
+            @Valid @RequestBody CursoUpdateDTO cursoUpdateDTO,
             BindingResult result,
             @Parameter(description = "ID del curso a actualizar", required = true)
             @PathVariable Long id) throws FechaInvalidaException {
@@ -77,11 +76,11 @@ public class CursoController {
             return validar(result);
         }
 
-        validarFechas(cursoDTO);
+        validarFechas(cursoUpdateDTO);
 
         return service.porId(id)
                 .map(cursoDb -> {
-                    actualizarCurso(cursoDb, cursoDTO);
+                    actualizarCurso(cursoDb, cursoUpdateDTO);
                     return ResponseEntity.ok(service.guardar(cursoDb));
                 })
                 .orElseThrow(() -> new CursoNotFoundException("Curso no encontrado con ID: " + id));
@@ -102,19 +101,36 @@ public class CursoController {
         throw new CursoNotFoundException("Curso no encontrado con ID: " + id);
     }
 
-    private void validarFechas(CursoDTO cursoDTO) {
+    @PatchMapping("/{id}/desactivar")
+    @Operation(summary = "Desactivar curso",
+            description = "Realiza un borrado lógico del curso, cambiando su estado a inactivo")
+    @ApiResponse(responseCode = "200", description = "Curso desactivado exitosamente")
+    @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    public ResponseEntity<Map<String, String>> desactivar(
+            @Parameter(description = "ID del curso a desactivar", required = true)
+            @PathVariable Long id) {
+
+        boolean desactivado = service.eliminarLogico(id);
+        if (desactivado) {
+            Map<String, String> response = new HashMap<>();
+            response.put("mensaje", "Curso desactivado exitosamente");
+            return ResponseEntity.ok(response);
+        }
+        throw new CursoNotFoundException("Curso no encontrado con ID: " + id);
+    }
+
+    private <T extends CursoFechaDTO> void validarFechas(T cursoDTO) {
         if (cursoDTO.inicio() != null && cursoDTO.finalizacion() != null &&
                 cursoDTO.inicio().isAfter(cursoDTO.finalizacion())) {
-            throw new FechaInvalidaException(cursoDTO.inicio(), cursoDTO.finalizacion(), "CursoDTO");
+            throw new FechaInvalidaException(cursoDTO.inicio(), cursoDTO.finalizacion(), cursoDTO.getClass().getSimpleName());
         }
     }
 
-    private void actualizarCurso(Curso cursoDb, CursoDTO cursoDTO) {
-        cursoDb.setNombre(cursoDTO.nombre());
+    private <T extends CursoFechaDTO> void actualizarCurso(Curso cursoDb, T cursoDTO) {
         cursoDb.setInicio(cursoDTO.inicio());
         cursoDb.setFinalizacion(cursoDTO.finalizacion());
-        cursoDb.setNotaMinima(cursoDTO.notaMinima());
     }
+
 
     private ResponseEntity<Map<String, String>> validar(BindingResult result) {
         Map<String, String> errores = new HashMap<>();
@@ -123,4 +139,5 @@ public class CursoController {
         );
         return ResponseEntity.badRequest().body(errores);
     }
+
 }
