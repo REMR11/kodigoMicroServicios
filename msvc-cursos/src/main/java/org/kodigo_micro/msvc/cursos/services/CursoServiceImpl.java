@@ -59,7 +59,6 @@ public class CursoServiceImpl implements CursoService{
 
     @Override
     @Transactional
-    @CacheEvict(value = {"cursos", "curso"}, allEntries = true)
     public boolean eliminarLogico(@NotNull Long id) {
         return repository.findById(id)
                 .map(curso -> {
