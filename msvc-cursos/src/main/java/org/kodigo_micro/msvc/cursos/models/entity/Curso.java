@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.kodigo_micro.msvc.cursos.models.dtos.CursoDTO;
+import org.kodigo_micro.msvc.cursos.models.dtos.CursoUpdateDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,21 +17,20 @@ import java.time.LocalDateTime;
 public class Curso {
     public Curso() {}
 
-    public Curso(Long id, String nombre, LocalDate inicio, LocalDate finalizacion, Double notaMinima, boolean state) {
-        this.id = id;
-        this.nombre = nombre;
-        this.inicio = inicio;
-        this.finalizacion = finalizacion;
-        this.notaMinima = notaMinima;
-        this.state = state;
+    public Curso(CursoUpdateDTO cursoUpdateDTO) {
+        this.nombre = cursoUpdateDTO.nombre();
+        this.inicio = cursoUpdateDTO.inicio();
+        this.finalizacion = cursoUpdateDTO.finalizacion();
+        this.notaMinima = cursoUpdateDTO.notaMinima();
+        this.state = cursoUpdateDTO.state();
     }
+
 
     public Curso(CursoDTO cursoDTO) {
         this.nombre = cursoDTO.nombre();
         this.inicio = cursoDTO.inicio();
         this.finalizacion = cursoDTO.finalizacion();
         this.notaMinima = cursoDTO.notaMinima();
-        this.state = true;
     }
 
     @Id
@@ -51,7 +51,7 @@ public class Curso {
     private Double notaMinima = 8.0;
 
     @NotNull()
-    private boolean state;
+    private boolean state = true;
     @AssertTrue(message = "La fecha de inicio debe ser antes de la finalización")
     public boolean isHorarioValido() {
         if (inicio == null || finalizacion == null) {
