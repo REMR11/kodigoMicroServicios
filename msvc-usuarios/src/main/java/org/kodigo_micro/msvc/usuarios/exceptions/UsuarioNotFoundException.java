@@ -4,7 +4,7 @@ public class UsuarioNotFoundException extends RuntimeException{
     private final long id;
     private final String message;
     public UsuarioNotFoundException(String message, Long id) {
-        super(String.format("Error en la entidad '%s': la fecha de inicio (%s) debe ser anterior a la fecha de finalización.",
+        super(String.format("Error en la entidad usuario:  '%s' : '%s'.",
                 message, id));
         this.id = id;
         this.message = message;
