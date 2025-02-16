@@ -69,6 +69,10 @@ public class CursoServiceImpl implements CursoService{
                 .orElseThrow(() -> new CursoNotFoundException("Curso no encontrado con id: " + id));
     }
 
+    /**
+     * Valida si la duracion y formato de fecha cumple con estandares establecidos
+     * @param curso
+     */
     private void validarFechasCurso(Curso curso) {
         validarDuracionMinima(curso); // Validamos la duración mínima antes de guardar
 

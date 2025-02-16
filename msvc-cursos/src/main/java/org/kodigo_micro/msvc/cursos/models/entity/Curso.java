@@ -9,14 +9,21 @@ import org.kodigo_micro.msvc.cursos.models.dtos.CursoDTO;
 import org.kodigo_micro.msvc.cursos.models.dtos.CursoUpdateDTO;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 @Entity
 @Table(name = "cursos")
 public class Curso {
+    /***
+     * Constructor vacio
+     */
     public Curso() {}
 
+
+    /***
+     * Contructor que es utilizado para convertir un tipo CursoUpdateDTO para modificar un curso existente
+     * @param cursoUpdateDTO
+     */
     public Curso(CursoUpdateDTO cursoUpdateDTO) {
         this.nombre = cursoUpdateDTO.nombre();
         this.inicio = cursoUpdateDTO.inicio();
@@ -25,7 +32,10 @@ public class Curso {
         this.state = cursoUpdateDTO.state();
     }
 
-
+    /***
+     * Contructor que consume CursoDTO destinado a crear un nuevo curso
+     * @param cursoDTO
+     */
     public Curso(CursoDTO cursoDTO) {
         this.nombre = cursoDTO.nombre();
         this.inicio = cursoDTO.inicio();

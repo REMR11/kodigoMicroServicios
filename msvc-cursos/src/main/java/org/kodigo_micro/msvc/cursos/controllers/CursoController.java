@@ -119,6 +119,11 @@ public class CursoController {
         throw new CursoNotFoundException("Curso no encontrado con ID: " + id);
     }
 
+    /**
+     * Metodo generico que valida si las fechas son validas
+     * @param cursoDTO
+     * @param <T>
+     */
     private <T extends CursoFechaDTO> void validarFechas(T cursoDTO) {
         if (cursoDTO.inicio() != null && cursoDTO.finalizacion() != null &&
                 cursoDTO.inicio().isAfter(cursoDTO.finalizacion())) {
@@ -126,12 +131,23 @@ public class CursoController {
         }
     }
 
+    /**
+     * Metodo generico que setea datos de fecha  al momento de actualizar un curso
+     * @param cursoDb
+     * @param cursoDTO
+     * @param <T>
+     */
     private <T extends CursoFechaDTO> void actualizarCurso(Curso cursoDb, T cursoDTO) {
         cursoDb.setInicio(cursoDTO.inicio());
         cursoDb.setFinalizacion(cursoDTO.finalizacion());
     }
 
 
+    /**
+     * Convierte los errores del BindingResult para ser mostrados al desarrollador de manera mas amigable
+     * @param result
+     * @return
+     */
     private ResponseEntity<Map<String, String>> validar(BindingResult result) {
         Map<String, String> errores = new HashMap<>();
         result.getFieldErrors().forEach(err ->
