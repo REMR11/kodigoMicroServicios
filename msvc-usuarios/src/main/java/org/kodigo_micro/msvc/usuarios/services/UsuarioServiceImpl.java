@@ -50,7 +50,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     @Transactional
-    public boolean eliminarLogico(Long id) {
+    public boolean desactivarUsuario(Long id) {
         return  repository.findById(id)
                 .map(usuario ->{
                     usuario.setState(false);

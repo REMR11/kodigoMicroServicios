@@ -13,5 +13,5 @@ public interface UsuarioService {
     Optional<Usuario> porId(@NotNull Long id);
     Usuario guardar(@Valid @NotNull Usuario usuario);
     void eliminar(@NotNull Long id);
-    boolean eliminarLogico(@NotNull Long id);
+    boolean desactivarUsuario(@NotNull Long id);
 }
