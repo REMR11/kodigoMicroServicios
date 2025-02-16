@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface UsuarioService {
     List<Usuario> listar();
+    Optional<List<Usuario>> ListUserByState(@NotNull boolean state);
     Optional<Usuario> porId(@NotNull Long id);
     Usuario guardar(@Valid @NotNull Usuario usuario);
     void eliminar(@NotNull Long id);

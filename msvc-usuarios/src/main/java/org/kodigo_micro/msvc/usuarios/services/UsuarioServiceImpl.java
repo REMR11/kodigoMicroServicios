@@ -21,7 +21,13 @@ public class UsuarioServiceImpl implements UsuarioService{
     @Override
     @Transactional(readOnly = true)
     public List<Usuario> listar() {
-        return (List<Usuario>) repository.findAll();
+        return repository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<List<Usuario>> ListUserByState(boolean state) {
+        return repository.findByState(state);
     }
 
     @Transactional(readOnly = true)

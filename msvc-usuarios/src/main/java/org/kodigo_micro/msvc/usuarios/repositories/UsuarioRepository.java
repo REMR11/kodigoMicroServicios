@@ -1,7 +1,11 @@
 package org.kodigo_micro.msvc.usuarios.repositories;
 
 import org.kodigo_micro.msvc.usuarios.models.entity.Usuario;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
+import java.util.List;
+import java.util.Optional;
+
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Optional<List<Usuario>> findByState(Boolean state);
 }
