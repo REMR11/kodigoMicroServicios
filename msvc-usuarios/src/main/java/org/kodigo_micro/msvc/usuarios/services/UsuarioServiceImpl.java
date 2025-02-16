@@ -2,6 +2,7 @@ package org.kodigo_micro.msvc.usuarios.services;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.kodigo_micro.msvc.usuarios.exceptions.UsuarioNotFoundException;
 import org.kodigo_micro.msvc.usuarios.models.entity.Usuario;
 import org.kodigo_micro.msvc.usuarios.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,16 @@ public class UsuarioServiceImpl implements UsuarioService{
     @Transactional
     public void eliminar(@NotNull Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public boolean eliminarLogico(Long id) {
+        return  repository.findById(id)
+                .map(usuario ->{
+                    usuario.setState(false);
+                    repository.save(usuario);
+                    return true;
+                }).orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado",id));
     }
 }
