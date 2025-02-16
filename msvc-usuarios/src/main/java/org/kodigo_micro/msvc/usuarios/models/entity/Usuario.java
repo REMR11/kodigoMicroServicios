@@ -1,10 +1,9 @@
 package org.kodigo_micro.msvc.usuarios.models.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import org.kodigo_micro.msvc.usuarios.models.dtos.UsuarioDTO;
+import org.kodigo_micro.msvc.usuarios.models.dtos.UsuarioUpdateDTO;
 
 
 @Entity
@@ -25,16 +24,24 @@ public class Usuario {
     private String email;
 
     @NotBlank
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial"
+    )
     private String password;
+
+    @NotNull(message = "Un suario siempre debe tener un estado")
+    @NotBlank(message = "El stado de usuario no puede estas vacio")
+    private boolean state;
 
     public Usuario() {
     }
 
-    public Usuario(Long id, String nombre, String email, String password) {
-        this.id = id;
-        this.nombre = nombre;
-        this.email = email;
-        this.password = password;
+    public Usuario(UsuarioUpdateDTO usuarioUpdateDTO) {
+        this.nombre = usuarioUpdateDTO.nombre();
+        this.email = usuarioUpdateDTO.email();
+        this.password = usuarioUpdateDTO.password();
+        this.state = usuarioUpdateDTO.state();
     }
 
     public Usuario(UsuarioDTO usuarioDTO) {
@@ -75,4 +82,8 @@ public class Usuario {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public boolean isState() { return state; }
+
+    public void setState(boolean state) {  this.state = state; }
 }
