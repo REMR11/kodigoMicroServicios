@@ -1,5 +1,7 @@
 package org.kodigo_micro.msvc.usuarios.services;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.kodigo_micro.msvc.usuarios.models.entity.Usuario;
 import org.kodigo_micro.msvc.usuarios.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +25,19 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Usuario> porId(Long id) {
+    public Optional<Usuario> porId(@NotNull Long id) {
         return repository.findById(id);
     }
 
     @Override
     @Transactional
-    public Usuario guardar(Usuario usuario) {
+    public Usuario guardar(@Valid @NotNull Usuario usuario) {
         return repository.save(usuario);
     }
 
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(@NotNull Long id) {
         repository.deleteById(id);
     }
 }
