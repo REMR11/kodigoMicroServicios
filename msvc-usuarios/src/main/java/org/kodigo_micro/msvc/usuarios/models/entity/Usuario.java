@@ -14,7 +14,8 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotEmpty
+    @NotBlank(message = "El nombre no puede estar vacio")
     private String nombre;
 
     @NotEmpty
@@ -31,7 +32,6 @@ public class Usuario {
     private String password;
 
     @NotNull(message = "Un suario siempre debe tener un estado")
-    @NotBlank(message = "El stado de usuario no puede estas vacio")
     private boolean state;
 
     public Usuario() {
@@ -48,6 +48,7 @@ public class Usuario {
         this.nombre = usuarioDTO.nombre();
         this.email = usuarioDTO.email();
         this.password = usuarioDTO.password();
+        this.state = true;
     }
 
 
