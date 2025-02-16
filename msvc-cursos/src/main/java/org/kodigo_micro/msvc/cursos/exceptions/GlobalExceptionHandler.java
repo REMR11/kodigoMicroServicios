@@ -41,8 +41,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleDuracionInvalidaException(DuracionInvalidaException ex){
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Bad Request");
+        response.put("status", HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE.value());
+        response.put("error", "Range not satisfiable    ");
+        response.put("message", ex.getMessage());
+        response.put("path", ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(NotaNegativaException.class)
+    public  ResponseEntity<Map<String, Object>> handleNotaMinimaException(NotaNegativaException ex){
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_ACCEPTABLE.value());
+        response.put("error", "Not acceptable");
         response.put("message", ex.getMessage());
         response.put("path", ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
 

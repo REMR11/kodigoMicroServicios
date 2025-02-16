@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.kodigo_micro.msvc.cursos.exceptions.CursoNotFoundException;
 import org.kodigo_micro.msvc.cursos.exceptions.DuracionInvalidaException;
 import org.kodigo_micro.msvc.cursos.exceptions.FechaInvalidaException;
+import org.kodigo_micro.msvc.cursos.exceptions.NotaNegativaException;
 import org.kodigo_micro.msvc.cursos.models.entity.Curso;
 import org.kodigo_micro.msvc.cursos.repositories.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class CursoServiceImpl implements CursoService{
     @Transactional
     @CacheEvict(value = {"cursos", "curso"}, allEntries = true)
     public Curso guardar(@Valid @NotNull Curso curso) {
-        validarFechasCurso(curso);
+        validarDatosCurso(curso);
         return repository.save(curso);
     }
 
@@ -70,20 +71,40 @@ public class CursoServiceImpl implements CursoService{
     }
 
     /**
-     * Valida si la duracion y formato de fecha cumple con estandares establecidos
+     * Metodo que contiene las validaciones necesarias para guardar un curso en la base de datos.
      * @param curso
      */
-    private void validarFechasCurso(Curso curso) {
+    private void validarDatosCurso(Curso curso){
+        validarNotaMinima(curso); // Valida que la nota minina de un curso nunca sea negativa
+        validarFechasCurso(curso); // Valida que la fecha final no sea antes que la fecha inicial
         validarDuracionMinima(curso); // Validamos la duración mínima antes de guardar
+    }
 
-        if (curso.getInicio().isAfter(curso.getFinalizacion())) {
+    /**
+     * Valida si la nota minima en el curso no sea negativa,
+     * si lo es retorna una excepcion.
+     * @param curso
+     * @throws  NotaNegativaException
+     */
+    private void validarNotaMinima(Curso curso){
+        if(curso.getNotaMinima()<= 0)
+            throw new NotaNegativaException(curso.getNotaMinima(), curso.getNombre());
+    }
+    /**
+     * Valida si la duracion y formato de fecha cumple con estandares establecidos,
+     * si no cumple, retorna una excepcion.
+     * @param curso
+     * @throws FechaInvalidaException
+     */
+    private void validarFechasCurso(Curso curso) {
+        if (curso.getInicio().isAfter(curso.getFinalizacion()))
             throw new FechaInvalidaException(curso.getInicio(), curso.getFinalizacion(), "Curso");
-        }
+
     }
 
     /**
      * Valida que la duración del curso sea de al menos 7 días.
-     *
+     * Si no cumple, retorna una excepcion.
      * @param curso Curso a validar
      * @throws DuracionInvalidaException si la duración es menor a 7 días
      */
