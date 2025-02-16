@@ -55,6 +55,8 @@ public class CursoController {
     @Operation(summary = "Crear nuevo curso", description = "Crea un nuevo curso con la información proporcionada")
     @ApiResponse(responseCode = "201", description = "Curso creado exitosamente")
     @ApiResponse(responseCode = "400", description = "Datos del curso inválidos")
+    @ApiResponse(responseCode = "406", description = "Curso no aceptado, revisa la nota minima.")
+    @ApiResponse(responseCode = "416", description = "Curso no cumple con la rango de fecha necesario.")
     public ResponseEntity<?> crear(@Valid @RequestBody CursoDTO cursoDTO, BindingResult result) throws FechaInvalidaException {
         if (result.hasErrors()) { return validar(result); }
         validarFechas(cursoDTO);
@@ -66,6 +68,8 @@ public class CursoController {
     @Operation(summary = "Actualizar curso", description = "Actualiza un curso existente por su ID")
     @ApiResponse(responseCode = "200", description = "Curso actualizado exitosamente")
     @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    @ApiResponse(responseCode = "406", description = "Curso no aceptado, revisa la nota minima.")
+    @ApiResponse(responseCode = "416", description = "Curso no cumple con la rango de fecha necesario.")
     public ResponseEntity<?> editar(
             @Valid @RequestBody CursoUpdateDTO cursoUpdateDTO,
             BindingResult result,
