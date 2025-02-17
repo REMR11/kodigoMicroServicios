@@ -24,4 +24,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(EmailDuplicateException.class)
+    public ResponseEntity<Map<String, Object>> handleEmailDuplicateException(EmailDuplicateException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.SEE_OTHER.value());
+        response.put("error", "See other");
+        response.put("message", ex.getMessage());
+        response.put("path", ServletUriComponentsBuilder.fromCurrentRequest().toUriString());
+
+        return ResponseEntity.badRequest().body(response);
+    }
 }
