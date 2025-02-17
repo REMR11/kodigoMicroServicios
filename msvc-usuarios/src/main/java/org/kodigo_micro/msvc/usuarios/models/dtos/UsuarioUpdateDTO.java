@@ -12,4 +12,4 @@ public record UsuarioUpdateDTO(
         String email,
         String password,
         boolean state
-) {}
+) implements  IUsuarioDTO{}

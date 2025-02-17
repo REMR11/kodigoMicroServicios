@@ -4,4 +4,4 @@ public record UsuarioDTO(
     String nombre,
     String email,
     String password
-) {}
+) implements IUsuarioDTO {}
