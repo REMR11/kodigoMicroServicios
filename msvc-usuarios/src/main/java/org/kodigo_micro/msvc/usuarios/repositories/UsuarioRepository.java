@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<List<Usuario>> findByState(Boolean state);
+    Optional<Usuario>findByemail(String email);
 }

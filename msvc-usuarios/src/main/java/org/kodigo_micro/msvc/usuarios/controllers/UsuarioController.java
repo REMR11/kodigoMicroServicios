@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.kodigo_micro.msvc.usuarios.exceptions.EmailDuplicateException;
 import org.kodigo_micro.msvc.usuarios.exceptions.UsuarioNotFoundException;
+import org.kodigo_micro.msvc.usuarios.models.dtos.IUsuarioDTO;
 import org.kodigo_micro.msvc.usuarios.models.dtos.UsuarioDTO;
 import org.kodigo_micro.msvc.usuarios.models.dtos.UsuarioUpdateDTO;
 import org.kodigo_micro.msvc.usuarios.models.entity.Usuario;
@@ -75,6 +77,20 @@ public class UsuarioController {
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado ", id));
     }
 
+    @GetMapping("/usuarios/email/{email}")
+    @Operation(summary = "Obtener usuario por email",
+            description = "Obtiene un usuario específico por su email")
+    @ApiResponse(responseCode = "200", description = "Usuario encontrado")
+    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    public ResponseEntity<?> BuscarPorEmail(
+            @Valid
+            @Parameter(description = "Email necesario para hacer la busqueda")
+            @RequestParam(required = true) String email){
+        return service.buscarPorEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     @Operation(summary = "Crear nuevo usuario",
             description = "Crea un nuevo usuario con la información proporcionada")
@@ -84,6 +100,7 @@ public class UsuarioController {
             @Valid @RequestBody UsuarioDTO usuario,
             BindingResult result) {
 
+        validarEmail(usuario);
         if (result.hasErrors()) {
             return validar(result);
         }
@@ -92,6 +109,8 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.guardar(usuariodb));
     }
+
+
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario",
@@ -105,6 +124,7 @@ public class UsuarioController {
             @Parameter(description = "ID del usuario a actualizar", required = true)
             @PathVariable Long id) {
 
+        validarEmail(usuario);
         if (result.hasErrors()) {
             return validar(result);
         }
@@ -157,6 +177,17 @@ public class UsuarioController {
             usuarioDb.setPassword(usuario.password());
         }
         usuarioDb.setState(usuario.state());
+    }
+
+    /**
+     * Metodo que valida si un email es utilizado por otro usuario, en caso de que sea utilizado o
+     * sea nulo devolvera una excepcion.
+     * @param usuario
+     * @throws  EmailDuplicateException
+     */
+    private void validarEmail(IUsuarioDTO usuario) {
+        if(!usuario.email().isEmpty() && service.buscarPorEmail(usuario.email()).isPresent())
+            throw new EmailDuplicateException(usuario.email());
     }
 
     private ResponseEntity<Map<String, String>> validar(BindingResult result) {

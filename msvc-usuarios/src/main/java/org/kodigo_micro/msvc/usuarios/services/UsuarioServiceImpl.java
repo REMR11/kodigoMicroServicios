@@ -37,6 +37,11 @@ public class UsuarioServiceImpl implements UsuarioService{
     }
 
     @Override
+    public Optional<Usuario> buscarPorEmail(String email) {
+        return repository.findByemail(email);
+    }
+
+    @Override
     @Transactional
     public Usuario guardar(@Valid @NotNull Usuario usuario) {
         return repository.save(usuario);
