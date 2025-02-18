@@ -5,10 +5,13 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.kodigo_micro.msvc.cursos.models.dtos.UsuarioDTO;
 import org.kodigo_micro.msvc.cursos.models.dtos.CursoDTO;
 import org.kodigo_micro.msvc.cursos.models.dtos.CursoUpdateDTO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -17,7 +20,10 @@ public class Curso {
     /***
      * Constructor vacio
      */
-    public Curso() {}
+    public Curso() {
+        cursoUsuarios = new ArrayList<>();
+        usuarios = new ArrayList<>();
+    }
 
 
     /***
@@ -50,6 +56,13 @@ public class Curso {
     @NotEmpty(message = "El nombre del curso no puede estar vacío")
     @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
     private String nombre;
+
+    @OneToMany(cascade =  CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id")
+    private List<CursoUsuario> cursoUsuarios;
+
+    @Transient
+    private List<UsuarioDTO> usuarios;
 
     @NotNull(message = "La fecha de inicio no puede ser nula")
     private LocalDate inicio;
@@ -117,5 +130,29 @@ public class Curso {
 
     public void setState(boolean state) {
         this.state = state;
+    }
+
+    public void addCursoUsuario(CursoUsuario cursoUsuario){
+        cursoUsuarios.add(cursoUsuario);
+    }
+
+    public void removeCursoUsuario(CursoUsuario cursoUsuario){
+        cursoUsuarios.remove(cursoUsuario);
+    }
+
+    public List<CursoUsuario> getCursoUsuarios() {
+        return cursoUsuarios;
+    }
+
+    public void setCursoUsuarios(List<CursoUsuario> cursoUsuarios) {
+        this.cursoUsuarios = cursoUsuarios;
+    }
+
+    public List<UsuarioDTO> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<UsuarioDTO> usuarios) {
+        this.usuarios = usuarios;
     }
 }
