@@ -6,6 +6,7 @@ import org.kodigo_micro.msvc.cursos.exceptions.CursoNotFoundException;
 import org.kodigo_micro.msvc.cursos.exceptions.DuracionInvalidaException;
 import org.kodigo_micro.msvc.cursos.exceptions.FechaInvalidaException;
 import org.kodigo_micro.msvc.cursos.exceptions.NotaNegativaException;
+import org.kodigo_micro.msvc.cursos.models.dtos.UsuarioDTO;
 import org.kodigo_micro.msvc.cursos.models.entity.Curso;
 import org.kodigo_micro.msvc.cursos.repositories.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,21 @@ public class CursoServiceImpl implements CursoService{
                     return true;
                 })
                 .orElseThrow(() -> new CursoNotFoundException("Curso no encontrado con id: " + id));
+    }
+
+    @Override
+    public Optional<UsuarioDTO> asignarUsuario(UsuarioDTO usuarioDTO, Long Id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<UsuarioDTO> crearUsuario(UsuarioDTO usuarioDTO, Long cursoId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<UsuarioDTO> removerUsuario(UsuarioDTO usuarioDTO, Long cursoId) {
+        return Optional.empty();
     }
 
     /**
