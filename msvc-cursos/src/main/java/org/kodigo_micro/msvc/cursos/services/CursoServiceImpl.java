@@ -2,12 +2,15 @@ package org.kodigo_micro.msvc.cursos.services;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.kodigo_micro.msvc.cursos.clients.UsuariosClientRest;
 import org.kodigo_micro.msvc.cursos.exceptions.CursoNotFoundException;
 import org.kodigo_micro.msvc.cursos.exceptions.DuracionInvalidaException;
 import org.kodigo_micro.msvc.cursos.exceptions.FechaInvalidaException;
 import org.kodigo_micro.msvc.cursos.exceptions.NotaNegativaException;
+import org.kodigo_micro.msvc.cursos.models.Usuario;
 import org.kodigo_micro.msvc.cursos.models.dtos.UsuarioDTO;
 import org.kodigo_micro.msvc.cursos.models.entity.Curso;
+import org.kodigo_micro.msvc.cursos.models.entity.CursoUsuario;
 import org.kodigo_micro.msvc.cursos.repositories.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,6 +29,9 @@ public class CursoServiceImpl implements CursoService{
 
     @Autowired
     private CursoRepository repository;
+
+    @Autowired
+    private UsuariosClientRest client;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,17 +78,59 @@ public class CursoServiceImpl implements CursoService{
     }
 
     @Override
-    public Optional<UsuarioDTO> asignarUsuario(UsuarioDTO usuarioDTO, Long Id) {
+    @Transactional
+    public Optional<Usuario> asignarUsuario(Usuario usuarioDTO, Long cursoId) {
+        Optional<Curso> optionalCurso = repository.findById(cursoId);
+
+        if(optionalCurso.isPresent()){
+            Usuario usuarioMsvc = client.detalle(usuarioDTO.getId()).getBody();
+
+            Curso curso = optionalCurso.get();
+
+            CursoUsuario cursoUsuario = new CursoUsuario();
+            cursoUsuario.setUsuarioId(usuarioMsvc.getId());
+            curso.addCursoUsuario(cursoUsuario);
+            repository.save(curso);
+            return Optional.of(usuarioMsvc);
+        }
         return Optional.empty();
     }
 
     @Override
-    public Optional<UsuarioDTO> crearUsuario(UsuarioDTO usuarioDTO, Long cursoId) {
+    @Transactional
+    public Optional<Usuario> crearUsuario(UsuarioDTO usuarioDTO, Long cursoId) {
+        Optional<Curso> optionalCurso = repository.findById(cursoId);
+
+        if(optionalCurso.isPresent()){
+            Usuario usuarioMsvc = client.crear(usuarioDTO).getBody();
+
+            Curso curso = optionalCurso.get();
+
+            CursoUsuario cursoUsuario = new CursoUsuario();
+            cursoUsuario.setUsuarioId(usuarioMsvc.getId());
+            curso.addCursoUsuario(cursoUsuario);
+            repository.save(curso);
+            return Optional.of(usuarioMsvc);
+        }
         return Optional.empty();
     }
 
     @Override
-    public Optional<UsuarioDTO> removerUsuario(UsuarioDTO usuarioDTO, Long cursoId) {
+    @Transactional
+    public Optional<Usuario> removerUsuario(Usuario usuarioDTO, Long cursoId) {
+        Optional<Curso> optionalCurso = repository.findById(cursoId);
+
+        if(optionalCurso.isPresent()){
+            Usuario usuarioMsvc = client.detalle(usuarioDTO.getId()).getBody();
+
+            Curso curso = optionalCurso.get();
+
+            CursoUsuario cursoUsuario = new CursoUsuario();
+            cursoUsuario.setUsuarioId(usuarioMsvc.getId());
+            curso.removeCursoUsuario(cursoUsuario);
+            repository.save(curso);
+            return Optional.of(usuarioMsvc);
+        }
         return Optional.empty();
     }
 

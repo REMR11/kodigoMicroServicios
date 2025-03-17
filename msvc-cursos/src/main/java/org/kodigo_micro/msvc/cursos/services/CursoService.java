@@ -2,6 +2,7 @@ package org.kodigo_micro.msvc.cursos.services;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.kodigo_micro.msvc.cursos.models.Usuario;
 import org.kodigo_micro.msvc.cursos.models.dtos.UsuarioDTO;
 import org.kodigo_micro.msvc.cursos.models.entity.Curso;
 
@@ -16,7 +17,7 @@ public interface CursoService {
     boolean eliminarLogico(@NotNull Long id);
 
 
-    Optional<UsuarioDTO> asignarUsuario(UsuarioDTO usuarioDTO, Long cursoId);
-    Optional<UsuarioDTO> crearUsuario(UsuarioDTO usuarioDTO, Long cursoId);
-    Optional<UsuarioDTO> removerUsuario(UsuarioDTO usuarioDTO, Long cursoId);
+    Optional<Usuario> asignarUsuario(Usuario usuarioDTO, Long cursoId);
+    Optional<Usuario> crearUsuario(UsuarioDTO usuarioDTO, Long cursoId);
+    Optional<Usuario> removerUsuario(Usuario usuarioDTO, Long cursoId);
 }

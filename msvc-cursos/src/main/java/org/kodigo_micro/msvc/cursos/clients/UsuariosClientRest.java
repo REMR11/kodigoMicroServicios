@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public interface UsuariosClientRest {
 
     @GetMapping("/{id}")
-    ResponseEntity<Usuario> detalle(@PathVariable Long id);
+    ResponseEntity<Usuario> detalle(@PathVariable Long usuarioid);
 
     @PostMapping
     ResponseEntity<Usuario> crear(@RequestBody UsuarioDTO usuario);
